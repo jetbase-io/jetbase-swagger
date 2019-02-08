@@ -18,8 +18,6 @@ consumes:
 tags:
 - name: "auth"
   description: "Operations about security and auth"
-- name: "role"
-  description: "Operations about user roles"
 - name: "user"
   description: "Operations about user"
 securityDefinitions:
