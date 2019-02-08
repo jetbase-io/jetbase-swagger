@@ -1,0 +1,315 @@
+swagger: "2.0"
+info:
+  version: "1.0.0"
+  title: "JetBase REST API"
+  description: "JetBase REST API"
+  termsOfService: "mvpngn.com/terms"
+  contact:
+    email: "alex.padalka@mvpngn.com"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "jetbase.io"
+basePath: "/api/v1"
+produces:
+  - "application/json"
+consumes:
+  - "application/json"
+tags:
+- name: "auth"
+  description: "Operations about security and auth"
+- name: "role"
+  description: "Operations about user roles"
+- name: "user"
+  description: "Operations about user"
+securityDefinitions:
+  JWT:
+    description: "JWT auth"
+    type: "apiKey"
+    name: "Authorization"
+    in: "header"
+security:
+  - JWT: []
+schemes:
+- "https"
+paths:
+  /login:
+    post:
+      tags:
+      - "auth"
+      summary: "Logs user into the system"
+      description: ""
+      operationId: "loginUser"
+      security: []
+      produces:
+      - "application/json"
+      parameters:
+      - name: "username"
+        in: "query"
+        description: "The user name for login"
+        required: true
+        type: "string"
+      - name: "password"
+        in: "query"
+        description: "The password for login in clear text"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+          headers:
+            X-Rate-Limit:
+              type: "integer"
+              format: "int32"
+              description: "calls per hour allowed by the user"
+            X-Expires-After:
+              type: "string"
+              format: "date-time"
+              description: "date in UTC when token expires"
+        400:
+          description: "Invalid username/password supplied"
+  /logout:
+    get:
+      tags:
+      - "auth"
+      summary: "Logs out current logged in user session"
+      description: ""
+      operationId: "logoutUser"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+  /users:
+    get:
+      summary: Get registered users.
+      description: |
+        This endpoint is for user to search registered users, support for filtering results with username.Notice, by now this operation is only for administrator.
+      parameters:
+        - name: username
+          in: query
+          type: string
+          required: false
+          description: Username for filtering results.
+        - name: email
+          in: query
+          type: string
+          required: false
+          description: Email for filtering results.
+        - name: page
+          in: query
+          type: integer
+          format: int32
+          required: false
+          description: 'The page nubmer, default is 1.'
+        - name: page_size
+          in: query
+          type: integer
+          format: int32
+          required: false
+          description: The size of per page.
+      tags:
+        - "user"
+      responses:
+        '200':
+          description: Searched for users successfully.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+        '400':
+          description: Invalid user ID.
+        '401':
+          description: User need to log in first.
+        '403':
+          description: User does not have permission of admin role.
+        '500':
+          description: Unexpected internal errors.
+    post:
+      tags:
+      - "user"
+      summary: "Create user"
+      description: "This can only be done by the logged in user."
+      operationId: "createUser"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Created user object"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        default:
+          description: "successful operation"
+  /users/current:
+    get:
+      summary: Get current user info.
+      description: |
+        This endpoint is to get the current user infomation.
+      tags:
+        - "user"
+      responses:
+        '200':
+          description: Get current user information successfully.
+          schema:
+            $ref: '#/definitions/User'
+        '401':
+          description: User need to log in first.
+  /users/{userId}:
+    get:
+      tags:
+      - "user"
+      summary: "Get user by user name"
+      description: ""
+      operationId: "getUserByName"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "The name that needs to be fetched. Use user1 for testing. "
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/User"
+        400:
+          description: "Invalid username supplied"
+        404:
+          description: "User not found"
+    put:
+      tags:
+      - "user"
+      summary: "Updated user"
+      description: "This can only be done by the logged in user."
+      operationId: "updateUser"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "name that need to be updated"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "body"
+        description: "Updated user object"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        400:
+          description: "Invalid user supplied"
+        404:
+          description: "User not found"
+    delete:
+      tags:
+      - "user"
+      summary: "Delete user"
+      description: "This can only be done by the logged in user."
+      operationId: "deleteUser"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "The name that needs to be deleted"
+        required: true
+        type: "integer"
+      responses:
+        400:
+          description: "Invalid username supplied"
+        404:
+          description: "User not found"
+  /users/{userId}/password:
+    put:
+      summary: Change the password on a user that already exists.
+      description: |
+        This endpoint is for user to update password. Users with the admin role can change any user's password. Guest users can change only their own password.
+      parameters:
+        - name: userId
+          in: path
+          type: integer
+          format: int
+          required: true
+          description: Registered user ID.
+        - name: password
+          in: body
+          description: Password to be updated, the attribute 'old_password' is optional when the API is called by the system administrator.
+          required: true
+          schema:
+            $ref: '#/definitions/Password'
+      tags:
+        - "user"
+      responses:
+        '200':
+          description: Updated password successfully.
+        '400':
+          description: Invalid user ID; Old password is blank; New password is blank.
+        '401':
+          description: Don't have authority to change password. Please check login status.
+        '403':
+          description: The caller does not have permission to update the password of the user with given ID, or the old password in request body is not correct. 
+        '500':
+          description: Unexpected internal errors.
+definitions:
+  User:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int32"
+      username:
+        type: "string"
+      firstName:
+        type: "string"
+      lastName:
+        type: "string"
+      email:
+        type: "string"
+      password:
+        type: "string"
+      role_id:
+        type: "integer"
+        format: "int32"
+      userStatus:
+        type: "integer"
+        format: "int32"
+        description: "User Status"
+  Role:
+    type: "object"
+    properties:
+      role_id:
+        type: "integer"
+        format: "int32"
+      name:
+        type: "string"
+  Password:
+    type: "object"
+    properties:
+      old_password:
+        type: "string"
+        description: The user's existing password.
+      new_password:
+        type: "string"
+        description: New password for marking as to be updated.
+  ApiResponse:
+    type: "object"
+    properties:
+      code:
+        type: "integer"
+        format: "int32"
+      type:
+        type: "string"
+      message:
+        type: "string"
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "https://docs.jetbase.io"
