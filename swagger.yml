@@ -69,7 +69,7 @@ paths:
         400:
           description: "Invalid username/password supplied"
   /logout:
-    get:
+    delete:
       tags:
       - "auth"
       summary: "Logs out current logged in user session"
