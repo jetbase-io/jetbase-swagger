@@ -42,7 +42,7 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "username"
+      - name: "email"
         in: "query"
         description: "The user name for login"
         required: true
@@ -67,7 +67,7 @@ paths:
               format: "date-time"
               description: "date in UTC when token expires"
         400:
-          description: "Invalid username/password supplied"
+          description: "Invalid email/password supplied"
   /logout:
     delete:
       tags:
@@ -85,13 +85,8 @@ paths:
     get:
       summary: Get registered users.
       description: |
-        This endpoint is for user to search registered users, support for filtering results with username.Notice, by now this operation is only for administrator.
+        This endpoint is for user to search registered users, support for filtering results. Notice, by now this operation is only for administrator.
       parameters:
-        - name: username
-          in: query
-          type: string
-          required: false
-          description: Username for filtering results.
         - name: email
           in: query
           type: string
@@ -158,17 +153,17 @@ paths:
             $ref: '#/definitions/User'
         '401':
           description: User need to log in first.
-  /users/{userId}:
+  /users/{user_id}:
     get:
       tags:
       - "user"
-      summary: "Get user by user name"
+      summary: "Get user by id"
       description: ""
-      operationId: "getUserByName"
+      operationId: "getUserById"
       produces:
       - "application/json"
       parameters:
-      - name: "userId"
+      - name: "user_id"
         in: "path"
         description: "The name that needs to be fetched. Use user1 for testing. "
         required: true
@@ -178,8 +173,6 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/User"
-        400:
-          description: "Invalid username supplied"
         404:
           description: "User not found"
     put:
@@ -191,7 +184,7 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "userId"
+      - name: "user_id"
         in: "path"
         description: "name that need to be updated"
         required: true
@@ -216,30 +209,28 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "userId"
+      - name: "user_id"
         in: "path"
-        description: "The name that needs to be deleted"
+        description: "User id that needs to be deleted"
         required: true
         type: "integer"
       responses:
-        400:
-          description: "Invalid username supplied"
         404:
           description: "User not found"
-  /users/{userId}/password:
+  /users/{user_id}/password:
     put:
       summary: Change the password on a user that already exists.
       description: |
         This endpoint is for user to update password. Users with the admin role can change any user's password. Guest users can change only their own password.
       parameters:
-        - name: userId
+        - name: user_id
           in: path
           type: integer
           format: int
           required: true
           description: Registered user ID.
-        - name: password
-          in: body
+        - in: body
+          name: body
           description: Password to be updated, the attribute 'old_password' is optional when the API is called by the system administrator.
           required: true
           schema:
@@ -264,8 +255,6 @@ definitions:
       id:
         type: "integer"
         format: "int32"
-      username:
-        type: "string"
       first_name:
         type: "string"
       last_name:
@@ -277,10 +266,6 @@ definitions:
       role_id:
         type: "integer"
         format: "int32"
-      userStatus:
-        type: "integer"
-        format: "int32"
-        description: "User Status"
   Role:
     type: "object"
     properties:
