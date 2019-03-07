@@ -2,24 +2,24 @@ swagger: "2.0"
 info:
   version: "1.0.0"
   title: "JetBase REST API"
-  description: "JetBase REST API"
+  description: "Document describes REST API for JetBase backends/frontends."
   termsOfService: "mvpngn.com/terms"
   contact:
     email: "alex.padalka@mvpngn.com"
   license:
-    name: "Apache 2.0"
-    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "jetbase.io"
+    name: "MIT"
+    url: "https://opensource.org/licenses/MIT"
+host: ""
 basePath: "/api/v1"
 produces:
   - "application/json"
 consumes:
   - "application/json"
 tags:
-- name: "auth"
-  description: "Operations about security and auth"
-- name: "user"
-  description: "Operations about user"
+  - name: "auth"
+    description: "Operations about security and auth"
+  - name: "user"
+    description: "Operations about user"
 securityDefinitions:
   JWT:
     description: "JWT auth"
@@ -29,29 +29,29 @@ securityDefinitions:
 security:
   - JWT: []
 schemes:
-- "https"
+  - "https"
 paths:
   /login:
     post:
       tags:
-      - "auth"
+        - "auth"
       summary: "Logs user into the system"
       description: ""
       operationId: "loginUser"
       security: []
       produces:
-      - "application/json"
+        - "application/json"
       parameters:
-      - name: "email"
-        in: "query"
-        description: "The user name for login"
-        required: true
-        type: "string"
-      - name: "password"
-        in: "query"
-        description: "The password for login in clear text"
-        required: true
-        type: "string"
+        - name: "email"
+          in: "query"
+          description: "The user name for login"
+          required: true
+          type: "string"
+        - name: "password"
+          in: "query"
+          description: "The password for login in clear text"
+          required: true
+          type: "string"
       responses:
         200:
           description: "successful operation"
@@ -71,12 +71,12 @@ paths:
   /logout:
     delete:
       tags:
-      - "auth"
+        - "auth"
       summary: "Logs out current logged in user session"
       description: ""
       operationId: "logoutUser"
       produces:
-      - "application/json"
+        - "application/json"
       parameters: []
       responses:
         default:
@@ -97,7 +97,7 @@ paths:
           type: integer
           format: int32
           required: false
-          description: 'The page nubmer, default is 1.'
+          description: 'The page number, default is 1.'
         - name: page_size
           in: query
           type: integer
@@ -123,19 +123,19 @@ paths:
           description: Unexpected internal errors.
     post:
       tags:
-      - "user"
+        - "user"
       summary: "Create user"
       description: "This can only be done by the logged in user."
       operationId: "createUser"
       produces:
-      - "application/json"
+        - "application/json"
       parameters:
-      - in: "body"
-        name: "body"
-        description: "Created user object"
-        required: true
-        schema:
-          $ref: "#/definitions/User"
+        - in: "body"
+          name: "body"
+          description: "Created user object"
+          required: true
+          schema:
+            $ref: "#/definitions/User"
       responses:
         default:
           description: "successful operation"
@@ -156,18 +156,18 @@ paths:
   /users/{user_id}:
     get:
       tags:
-      - "user"
+        - "user"
       summary: "Get user by id"
       description: ""
       operationId: "getUserById"
       produces:
-      - "application/json"
+        - "application/json"
       parameters:
-      - name: "user_id"
-        in: "path"
-        description: "The name that needs to be fetched. Use user1 for testing. "
-        required: true
-        type: "integer"
+        - name: "user_id"
+          in: "path"
+          description: "The name that needs to be fetched. Use user1 for testing. "
+          required: true
+          type: "integer"
       responses:
         200:
           description: "successful operation"
@@ -177,24 +177,24 @@ paths:
           description: "User not found"
     put:
       tags:
-      - "user"
+        - "user"
       summary: "Updated user"
       description: "This can only be done by the logged in user."
       operationId: "updateUser"
       produces:
-      - "application/json"
+        - "application/json"
       parameters:
-      - name: "user_id"
-        in: "path"
-        description: "name that need to be updated"
-        required: true
-        type: "integer"
-      - in: "body"
-        name: "body"
-        description: "Updated user object"
-        required: true
-        schema:
-          $ref: "#/definitions/User"
+        - name: "user_id"
+          in: "path"
+          description: "name that need to be updated"
+          required: true
+          type: "integer"
+        - in: "body"
+          name: "body"
+          description: "Updated user object"
+          required: true
+          schema:
+            $ref: "#/definitions/User"
       responses:
         400:
           description: "Invalid user supplied"
@@ -202,18 +202,18 @@ paths:
           description: "User not found"
     delete:
       tags:
-      - "user"
+        - "user"
       summary: "Delete user"
       description: "This can only be done by the logged in user."
       operationId: "deleteUser"
       produces:
-      - "application/json"
+        - "application/json"
       parameters:
-      - name: "user_id"
-        in: "path"
-        description: "User id that needs to be deleted"
-        required: true
-        type: "integer"
+        - name: "user_id"
+          in: "path"
+          description: "User id that needs to be deleted"
+          required: true
+          type: "integer"
       responses:
         404:
           description: "User not found"
@@ -245,7 +245,7 @@ paths:
         '401':
           description: Don't have authority to change password. Please check login status.
         '403':
-          description: The caller does not have permission to update the password of the user with given ID, or the old password in request body is not correct. 
+          description: The caller does not have permission to update the password of the user with given ID, or the old password in request body is not correct.
         '500':
           description: Unexpected internal errors.
 definitions:
@@ -279,7 +279,7 @@ definitions:
     properties:
       old_password:
         type: "string"
-        description: The user's existing password.
+        description: The user's current password.
       new_password:
         type: "string"
         description: New password for marking as to be updated.
@@ -294,5 +294,5 @@ definitions:
       message:
         type: "string"
 externalDocs:
-  description: "Find out more about Swagger"
-  url: "https://docs.jetbase.io"
+  description: "Find out more about JetBase"
+  url: "https://jetbase.io"
