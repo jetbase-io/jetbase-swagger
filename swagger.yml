@@ -184,7 +184,7 @@ paths:
       parameters:
         - name: "user_id"
           in: "path"
-          description: "name that need to be updated"
+          description: "user id which need to be updated"
           required: true
           type: "integer"
         - in: "body"
