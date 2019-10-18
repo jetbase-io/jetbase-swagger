@@ -44,7 +44,7 @@ paths:
       parameters:
         - name: "email"
           in: "query"
-          description: "The user name for login"
+          description: "The user's email for login"
           required: true
           type: "string"
         - name: "password"
