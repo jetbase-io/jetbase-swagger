@@ -249,6 +249,21 @@ paths:
         '500':
           description: Unexpected internal errors.
 definitions:
+  UserCreate: "object"
+    properties:
+      first_name:
+        type: "string"
+      last_name:
+        type: "string"
+      email:
+        type: "string"
+      password:
+        type: "string"
+      password_confirmation:
+        type: "string"
+      role_id:
+        type: "integer"
+        format: "int32"
   User:
     type: "object"
     properties:
@@ -283,16 +298,6 @@ definitions:
       new_password:
         type: "string"
         description: New password for marking as to be updated.
-  ApiResponse:
-    type: "object"
-    properties:
-      code:
-        type: "integer"
-        format: "int32"
-      type:
-        type: "string"
-      message:
-        type: "string"
 externalDocs:
   description: "Find out more about JetBase"
   url: "https://jetbase.io"
