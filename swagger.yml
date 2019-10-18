@@ -135,7 +135,7 @@ paths:
           description: "Created user object"
           required: true
           schema:
-            $ref: "#/definitions/User"
+            $ref: "#/definitions/UserCreate"
       responses:
         default:
           description: "successful operation"
