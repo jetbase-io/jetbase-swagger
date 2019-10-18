@@ -56,7 +56,6 @@ paths:
         200:
           description: "successful operation"
           schema:
-            description: "authorization token"
             type: "string"
           headers:
             X-Rate-Limit:
