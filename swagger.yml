@@ -112,7 +112,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: "#/definitions/User"
+              $ref: "#/definitions/UserGet"
         '400':
           description: Invalid user ID.
         '401':
@@ -150,7 +150,7 @@ paths:
         '200':
           description: Get current user information successfully.
           schema:
-            $ref: "#/definitions/User"
+            $ref: "#/definitions/UserGet"
         '401':
           description: User need to log in first.
   /users/{user_id}:
@@ -172,7 +172,7 @@ paths:
         200:
           description: "successful operation"
           schema:
-            $ref: "#/definitions/User"
+            $ref: "#/definitions/UserGet"
         404:
           description: "User not found"
     put:
@@ -194,7 +194,7 @@ paths:
           description: "Updated user object"
           required: true
           schema:
-            $ref: "#/definitions/User"
+            $ref: "#/definitions/UserUpdate"
       responses:
         400:
           description: "Invalid user supplied"
@@ -265,7 +265,19 @@ definitions:
       role_id:
         type: "integer"
         format: "int32"
-  User:
+  UserUpdate:
+    type: "object"
+    properties:
+      first_name:
+        type: "string"
+      last_name:
+        type: "string"
+      email:
+        type: "string"
+      role_id:
+        type: "integer"
+        format: "int32"
+  UserGet:
     type: "object"
     properties:
       id:
@@ -276,8 +288,6 @@ definitions:
       last_name:
         type: "string"
       email:
-        type: "string"
-      password:
         type: "string"
       role_id:
         type: "integer"
