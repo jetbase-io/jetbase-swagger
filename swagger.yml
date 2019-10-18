@@ -112,7 +112,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/User'
+              $ref: "#/definitions/User"
         '400':
           description: Invalid user ID.
         '401':
@@ -150,7 +150,7 @@ paths:
         '200':
           description: Get current user information successfully.
           schema:
-            $ref: '#/definitions/User'
+            $ref: "#/definitions/User"
         '401':
           description: User need to log in first.
   /users/{user_id}:
@@ -234,7 +234,7 @@ paths:
           description: Password to be updated, the attribute 'old_password' is optional when the API is called by the system administrator.
           required: true
           schema:
-            $ref: '#/definitions/Password'
+            $ref: "#/definitions/Password"
       tags:
         - "user"
       responses:
