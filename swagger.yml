@@ -177,7 +177,7 @@ paths:
       tags:
         - "user"
       summary: "Updated user"
-      description: "This can only be done by the logged in user."
+      description: "This can only be done by the logged in user. If passed role_id, only admin can change role, otherwise this field will be ignored"
       operationId: "updateUser"
       produces:
         - "application/json"
