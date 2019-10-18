@@ -249,7 +249,8 @@ paths:
         '500':
           description: Unexpected internal errors.
 definitions:
-  UserCreate: "object"
+  UserCreate:
+    type: "object"
     properties:
       first_name:
         type: "string"
