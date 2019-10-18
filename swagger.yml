@@ -113,8 +113,6 @@ paths:
             type: array
             items:
               $ref: "#/definitions/UserGet"
-        '400':
-          description: Invalid user ID.
         '401':
           description: User need to log in first.
         '403':
