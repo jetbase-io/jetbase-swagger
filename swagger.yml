@@ -43,12 +43,12 @@ paths:
         - "application/json"
       parameters:
         - name: "email"
-          in: "query"
+          in: "body"
           description: "The user's email for login"
           required: true
           type: "string"
         - name: "password"
-          in: "query"
+          in: "body"
           description: "The password for login in clear text"
           required: true
           type: "string"
