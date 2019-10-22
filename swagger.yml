@@ -271,6 +271,12 @@ definitions:
       role_id:
         type: "integer"
         format: "int32"
+    required:
+      - first_name
+      - last_name
+      - email
+      - password
+      - password_confirmation
   UserUpdate:
     type: "object"
     properties:
