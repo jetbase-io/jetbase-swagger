@@ -302,6 +302,7 @@ definitions:
       id:
         type: "integer"
         format: "int32"
+        example: 1
       first_name:
         type: "string"
       last_name:
