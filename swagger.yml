@@ -271,6 +271,7 @@ definitions:
         type: "string"
       email:
         type: "string"
+        format: email
       password:
         type: "string"
       password_confirmation:
@@ -293,6 +294,7 @@ definitions:
         type: "string"
       email:
         type: "string"
+        format: email
       role_id:
         type: "integer"
         format: "int32"
@@ -309,6 +311,7 @@ definitions:
         type: "string"
       email:
         type: "string"
+        format: email
       role_id:
         type: "integer"
         format: "int32"
