@@ -143,8 +143,15 @@ paths:
           schema:
             $ref: "#/definitions/UserCreate"
       responses:
-        default:
-          description: "successful operation"
+        '200':
+          description: "user successfully created"
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+                description: Id of created user
+                example: 1
   /users/current:
     get:
       summary: Get current user info.
