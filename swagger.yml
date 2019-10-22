@@ -42,30 +42,37 @@ paths:
       produces:
         - "application/json"
       parameters:
-        - name: "email"
-          in: "body"
-          description: "The user's email for login"
-          required: true
-          type: "string"
-        - name: "password"
-          in: "body"
-          description: "The password for login in clear text"
-          required: true
-          type: "string"
+        - in: "body"
+          name: "body"
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                format: email
+                description: "The user's email for login"
+              password:
+                type: string
+                format: password
+                description: "The password for login in clear text"
+            required:
+              - email
+              - password
       responses:
         200:
           description: "successful operation"
           schema:
-            type: "string"
-          headers:
-            X-Rate-Limit:
-              type: "integer"
-              format: "int32"
-              description: "calls per hour allowed by the user"
-            X-Expires-After:
-              type: "string"
-              format: "date-time"
-              description: "date in UTC when token expires"
+            type: object
+            properties:
+              token:
+                type: string
+              rate_limit:
+                type: integer
+                description: "calls per hour allowed by the user"
+              expires_after:
+                type: string
+                format: date-time
+                description: "date in UTC when token expires"
         400:
           description: "Invalid email/password supplied"
   /logout:
