@@ -69,6 +69,7 @@ paths:
               rate_limit:
                 type: integer
                 description: "calls per hour allowed by the user"
+                example: 3600
               expires_after:
                 type: string
                 format: date-time
