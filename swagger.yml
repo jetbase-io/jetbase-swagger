@@ -130,6 +130,7 @@ paths:
               count:
                 type: integer
                 description: The count of found users
+                example: 1
         '401':
           description: User need to log in first.
         '403':
