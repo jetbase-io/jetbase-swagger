@@ -13,7 +13,7 @@ It's a great way to generate in a couple of minutes fully functional web applica
 
 ## Swagger usage
 
-- Step 0: Open [swagger editor](https://petstore.swagger.io/)
+- Step 0: Open [Swagger UI](https://petstore.swagger.io/)
 - Step 1: Put in address bar path to [swagger.yml](https://raw.githubusercontent.com/jetbase-io/jetbase-swagger/master/swagger.yml)
 
 

@@ -42,30 +42,38 @@ paths:
       produces:
         - "application/json"
       parameters:
-        - name: "email"
-          in: "query"
-          description: "The user name for login"
-          required: true
-          type: "string"
-        - name: "password"
-          in: "query"
-          description: "The password for login in clear text"
-          required: true
-          type: "string"
+        - in: "body"
+          name: "body"
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                format: email
+                description: "The user's email for login"
+              password:
+                type: string
+                format: password
+                description: "The password for login in clear text"
+            required:
+              - email
+              - password
       responses:
         200:
           description: "successful operation"
           schema:
-            type: "string"
-          headers:
-            X-Rate-Limit:
-              type: "integer"
-              format: "int32"
-              description: "calls per hour allowed by the user"
-            X-Expires-After:
-              type: "string"
-              format: "date-time"
-              description: "date in UTC when token expires"
+            type: object
+            properties:
+              token:
+                type: string
+              rate_limit:
+                type: integer
+                description: "calls per hour allowed by the user"
+                example: 3600
+              expires_after:
+                type: string
+                format: date-time
+                description: "date in UTC when token expires"
         400:
           description: "Invalid email/password supplied"
   /logout:
@@ -85,36 +93,44 @@ paths:
     get:
       summary: Get registered users.
       description: |
-        This endpoint is for user to search registered users, support for filtering results. Notice, by now this operation is only for administrator.
+        This endpoint is for user to search registered users, support for filtering results.<br>
+        Notice, by now this operation is only for administrator.<br>
+        Pagination: only if `limit` param passed, otherwise returns all users
       parameters:
         - name: email
           in: query
           type: string
           required: false
-          description: Email for filtering results.
-        - name: page
+          description: Email or part of email for filtering results.
+        - name: limit
           in: query
           type: integer
           format: int32
           required: false
-          description: 'The page number, default is 1.'
-        - name: page_size
+          description: The count of users per page, default unlimited
+        - name: offset
           in: query
           type: integer
           format: int32
           required: false
-          description: The size of per page.
+          description: The count of skip users, default is 0
       tags:
         - "user"
       responses:
         '200':
           description: Searched for users successfully.
           schema:
-            type: array
-            items:
-              $ref: '#/definitions/User'
-        '400':
-          description: Invalid user ID.
+            type: object
+            properties:
+              items:
+                description: The collection of found users
+                type: array
+                items:
+                  $ref: "#/definitions/UserGet"
+              count:
+                type: integer
+                description: The count of found users
+                example: 1
         '401':
           description: User need to log in first.
         '403':
@@ -135,10 +151,17 @@ paths:
           description: "Created user object"
           required: true
           schema:
-            $ref: "#/definitions/User"
+            $ref: "#/definitions/UserCreate"
       responses:
-        default:
-          description: "successful operation"
+        '200':
+          description: "user successfully created"
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+                description: Id of created user
+                example: 1
   /users/current:
     get:
       summary: Get current user info.
@@ -150,7 +173,7 @@ paths:
         '200':
           description: Get current user information successfully.
           schema:
-            $ref: '#/definitions/User'
+            $ref: "#/definitions/UserGet"
         '401':
           description: User need to log in first.
   /users/{user_id}:
@@ -172,21 +195,21 @@ paths:
         200:
           description: "successful operation"
           schema:
-            $ref: "#/definitions/User"
+            $ref: "#/definitions/UserGet"
         404:
           description: "User not found"
     put:
       tags:
         - "user"
       summary: "Updated user"
-      description: "This can only be done by the logged in user."
+      description: "This can only be done by the logged in user. If passed role_id, only admin can change role, otherwise this field will be ignored"
       operationId: "updateUser"
       produces:
         - "application/json"
       parameters:
         - name: "user_id"
           in: "path"
-          description: "name that need to be updated"
+          description: "user id which need to be updated"
           required: true
           type: "integer"
         - in: "body"
@@ -194,7 +217,7 @@ paths:
           description: "Updated user object"
           required: true
           schema:
-            $ref: "#/definitions/User"
+            $ref: "#/definitions/UserUpdate"
       responses:
         400:
           description: "Invalid user supplied"
@@ -234,7 +257,7 @@ paths:
           description: Password to be updated, the attribute 'old_password' is optional when the API is called by the system administrator.
           required: true
           schema:
-            $ref: '#/definitions/Password'
+            $ref: "#/definitions/Password"
       tags:
         - "user"
       responses:
@@ -249,20 +272,56 @@ paths:
         '500':
           description: Unexpected internal errors.
 definitions:
-  User:
+  UserCreate:
     type: "object"
     properties:
-      id:
-        type: "integer"
-        format: "int32"
       first_name:
         type: "string"
       last_name:
         type: "string"
       email:
         type: "string"
+        format: email
       password:
         type: "string"
+      password_confirmation:
+        type: "string"
+      role_id:
+        type: "integer"
+        format: "int32"
+    required:
+      - first_name
+      - last_name
+      - email
+      - password
+      - password_confirmation
+  UserUpdate:
+    type: "object"
+    properties:
+      first_name:
+        type: "string"
+      last_name:
+        type: "string"
+      email:
+        type: "string"
+        format: email
+      role_id:
+        type: "integer"
+        format: "int32"
+  UserGet:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int32"
+        example: 1
+      first_name:
+        type: "string"
+      last_name:
+        type: "string"
+      email:
+        type: "string"
+        format: email
       role_id:
         type: "integer"
         format: "int32"
@@ -283,16 +342,6 @@ definitions:
       new_password:
         type: "string"
         description: New password for marking as to be updated.
-  ApiResponse:
-    type: "object"
-    properties:
-      code:
-        type: "integer"
-        format: "int32"
-      type:
-        type: "string"
-      message:
-        type: "string"
 externalDocs:
   description: "Find out more about JetBase"
   url: "https://jetbase.io"
