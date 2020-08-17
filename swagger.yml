@@ -139,7 +139,7 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
         '403':
-          description: User does not have permission of admin role.
+          description: Permission denied for this action.
           schema:
             $ref: '#/definitions/ErrorResponse'
         '500':
@@ -174,13 +174,13 @@ paths:
         '400':
           description: Bad Request (Email already exists. Empty required fields. Min length error. Password does not match with password confirmation.)
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: '#/definitions/FormError'
         '401':
           description: User needs to log in first.
           schema:
             $ref: '#/definitions/ErrorResponse'
         '403':
-          description: User does not have permission of admin role.
+          description: Permission denied for this action.
           schema:
             $ref: '#/definitions/ErrorResponse'
         '500':
@@ -228,7 +228,7 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
         '403':
-          description: User does not have permission of admin role.
+          description: Permission denied for this action.
           schema:
             $ref: '#/definitions/ErrorResponse'
         '404':
@@ -262,16 +262,18 @@ paths:
       responses:
         '200':
           description: Updated user successfully.
+          schema:
+            $ref: '#/definitions/SuccussResponse'
         '400':
           description: Bad Request (Invalid user supplied. Email already exists. Invalid email type. Invalid min length)
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: '#/definitions/FormError'
         '401':
           description: User needs to log in first.
           schema:
             $ref: '#/definitions/ErrorResponse'
         '403':
-          description: User does not have permission of admin role.
+          description: Permission denied for this action.
           schema:
             $ref: '#/definitions/ErrorResponse'
         '404':
@@ -299,12 +301,14 @@ paths:
       responses:
         '200':
           description: User successfully deleted.
+          schema:
+            $ref: '#/definitions/SuccussResponse'
         '401':
           description: User needs to log in first.
           schema:
             $ref: '#/definitions/ErrorResponse'
         '403':
-          description: User does not have permission of admin role.
+          description: Permission denied for this action.
           schema:
             $ref: '#/definitions/ErrorResponse'
         '404':
@@ -338,16 +342,18 @@ paths:
       responses:
         '200':
           description: Updated password successfully.
+          schema:
+            $ref: '#/definitions/SuccussResponse'
         '400':
           description: Bad Request (Invalid user ID; Old password is blank; New password is blank. Invalid min length password)
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: '#/definitions/FormError'
         '401':
           description: Don't have authority to change password. Please check login status.
           schema:
             $ref: '#/definitions/ErrorResponse'
         '403':
-          description: User does not have permission of admin role. / Old password does not a match with your password
+          description: Permission denied for this action. / Old password does not a match with your password
           schema:
             $ref: '#/definitions/ErrorResponse'
         '500':
@@ -378,11 +384,45 @@ definitions:
       - email
       - password
       - password_confirmation
+  SuccussResponse:
+    type: 'object'
+    properties:
+      message:
+        type: 'string'
   ErrorResponse:
     type: 'object'
     properties:
       message:
         type: 'string'
+      message_key:
+        type: 'string'
+  FormError:
+    type: 'object'
+    properties:
+      message:
+        type: 'string'
+      error_object:
+        type: 'object'
+      message_key:
+        type: 'string'
+      form_errors:
+        type: 'array'
+        items:
+          type: 'object'
+          properties:
+            field_name:
+              type: string
+            field_errors:
+              type: 'array'
+              items:
+                type: 'object'
+                properties:
+                  message:
+                    type: 'string'
+                  error_key:
+                    type: 'string'
+                  error_object:
+                    type: 'object'
   UserUpdate:
     type: 'object'
     properties:
