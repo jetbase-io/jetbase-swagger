@@ -1,49 +1,49 @@
-swagger: "2.0"
+swagger: '2.0'
 info:
-  version: "1.0.0"
-  title: "JetBase REST API"
-  description: "Document describes REST API for JetBase backends/frontends."
-  termsOfService: "mvpngn.com/terms"
+  version: '1.0.0'
+  title: 'JetBase REST API'
+  description: 'Document describes REST API for JetBase backends/frontends.'
+  termsOfService: 'mvpngn.com/terms'
   contact:
-    email: "alex.padalka@mvpngn.com"
+    email: 'alex.padalka@mvpngn.com'
   license:
-    name: "MIT"
-    url: "https://opensource.org/licenses/MIT"
-host: ""
-basePath: "/api/v1"
+    name: 'MIT'
+    url: 'https://opensource.org/licenses/MIT'
+host: ''
+basePath: '/api/v1'
 produces:
-  - "application/json"
+  - 'application/json'
 consumes:
-  - "application/json"
+  - 'application/json'
 tags:
-  - name: "auth"
-    description: "Operations about security and auth"
-  - name: "user"
-    description: "Operations about user"
+  - name: 'auth'
+    description: 'Operations about security and auth'
+  - name: 'user'
+    description: 'Operations about user'
 securityDefinitions:
   JWT:
-    description: "JWT auth"
-    type: "apiKey"
-    name: "Authorization"
-    in: "header"
+    description: 'JWT auth'
+    type: 'apiKey'
+    name: 'Authorization'
+    in: 'header'
 security:
   - JWT: []
 schemes:
-  - "https"
+  - 'https'
 paths:
   /login:
     post:
       tags:
-        - "auth"
-      summary: "Logs user into the system"
-      description: ""
-      operationId: "loginUser"
+        - 'auth'
+      summary: 'Logs user into the system'
+      description: ''
+      operationId: 'loginUser'
       security: []
       produces:
-        - "application/json"
+        - 'application/json'
       parameters:
-        - in: "body"
-          name: "body"
+        - in: 'body'
+          name: 'body'
           schema:
             type: object
             properties:
@@ -54,13 +54,13 @@ paths:
               password:
                 type: string
                 format: password
-                description: "The password for login in clear text"
+                description: 'The password for login in clear text'
             required:
               - email
               - password
       responses:
-        200:
-          description: "successful operation"
+        '200':
+          description: successful operation
           schema:
             type: object
             properties:
@@ -68,27 +68,30 @@ paths:
                 type: string
               rate_limit:
                 type: integer
-                description: "calls per hour allowed by the user"
+                description: 'calls per hour allowed by the user'
                 example: 3600
               expires_after:
                 type: string
                 format: date-time
-                description: "date in UTC when token expires"
-        400:
-          description: "Invalid email/password supplied"
+                description: 'date in UTC when token expires'
+        '400':
+          description: Invalid email/password supplied
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+
   /logout:
     delete:
       tags:
-        - "auth"
-      summary: "Logs out current logged in user session"
-      description: ""
-      operationId: "logoutUser"
+        - 'auth'
+      summary: 'Logs out current logged in user session'
+      description: ''
+      operationId: 'logoutUser'
       produces:
-        - "application/json"
+        - 'application/json'
       parameters: []
       responses:
         default:
-          description: "successful operation"
+          description: 'successful operation'
   /users:
     get:
       summary: Get registered users.
@@ -115,9 +118,9 @@ paths:
           required: false
           description: The count of skip users, default is 0
       tags:
-        - "user"
+        - 'user'
       responses:
-        "200":
+        '200':
           description: Searched for users successfully.
           schema:
             type: object
@@ -126,35 +129,41 @@ paths:
                 description: The collection of found users
                 type: array
                 items:
-                  $ref: "#/definitions/UserGet"
+                  $ref: '#/definitions/UserGet'
               count:
                 type: integer
                 description: The count of found users
                 example: 1
-        "401":
+        '401':
           description: User need to log in first.
-        "403":
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '403':
           description: User does not have permission of admin role.
-        "500":
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '500':
           description: Unexpected internal errors.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
     post:
       tags:
-        - "user"
-      summary: "Create user"
-      description: "This can only be done by the logged in user."
-      operationId: "createUser"
+        - 'user'
+      summary: 'Create user'
+      description: 'This can only be done by the logged in user.'
+      operationId: 'createUser'
       produces:
-        - "application/json"
+        - 'application/json'
       parameters:
-        - in: "body"
-          name: "body"
-          description: "Created user object"
+        - in: 'body'
+          name: 'body'
+          description: 'Created user object'
           required: true
           schema:
-            $ref: "#/definitions/UserCreate"
+            $ref: '#/definitions/UserCreate'
       responses:
-        "200":
-          description: "user successfully created"
+        '200':
+          description: 'user successfully created'
           schema:
             type: object
             properties:
@@ -162,148 +171,150 @@ paths:
                 type: integer
                 description: Id of created user
                 example: 1
-        "400":
+        '400':
           description: Bad Request (Email already exists. Empty required fields. Min length error. Password does not match with password confirmation.)
           schema:
-            $ref: "#/definitions/ErrorResponse"
-        "401":
+            $ref: '#/definitions/ErrorResponse'
+        '401':
           description: User needs to log in first.
           schema:
-            $ref: "#/definitions/ErrorResponse"
-        "403":
+            $ref: '#/definitions/ErrorResponse'
+        '403':
           description: User does not have permission of admin role.
           schema:
-            $ref: "#/definitions/ErrorResponse"
-        "500":
+            $ref: '#/definitions/ErrorResponse'
+        '500':
           description: Unexpected internal errors.
           schema:
-            $ref: "#/definitions/ErrorResponse"
+            $ref: '#/definitions/ErrorResponse'
   /users/current:
     get:
       summary: Get current user info.
       description: |
         This endpoint is to get the current user infomation.
       tags:
-        - "user"
+        - 'user'
       responses:
-        "200":
+        '200':
           description: Get current user information successfully.
           schema:
-            $ref: "#/definitions/UserGet"
-        "401":
+            $ref: '#/definitions/UserGet'
+        '401':
           description: User need to log in first.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
   /users/{user_id}:
     get:
       tags:
-        - "user"
-      summary: "Get user by id"
-      description: "This operation is only for administrator."
-      operationId: "getUserById"
+        - 'user'
+      summary: 'Get user by id'
+      description: 'This operation is only for administrator.'
+      operationId: 'getUserById'
       produces:
-        - "application/json"
+        - 'application/json'
       parameters:
-        - name: "user_id"
-          in: "path"
-          description: "The name that needs to be fetched. Use user1 for testing. "
+        - name: 'user_id'
+          in: 'path'
+          description: 'The name that needs to be fetched. Use user1 for testing. '
           required: true
-          type: "integer"
+          type: 'integer'
       responses:
-        200:
-          description: "successful operation"
+        '200':
+          description: successful operation
           schema:
-            $ref: "#/definitions/UserGet"
-        401:
-          description: "User needs to log in first."
+            $ref: '#/definitions/UserGet'
+        '401':
+          description: User needs to log in first.
           schema:
-            $ref: "#/definitions/ErrorResponse"
-        403:
-          description: "User does not have permission of admin role."
+            $ref: '#/definitions/ErrorResponse'
+        '403':
+          description: User does not have permission of admin role.
           schema:
-            $ref: "#/definitions/ErrorResponse"
-        404:
-          description: "User not found."
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: User not found.
           schema:
-            $ref: "#/definitions/ErrorResponse"
-        500:
-          description: "Unexpected internal errors."
+            $ref: '#/definitions/ErrorResponse'
+        '500':
+          description: Unexpected internal errors.
           schema:
-            $ref: "#/definitions/ErrorResponse"
+            $ref: '#/definitions/ErrorResponse'
     put:
       tags:
-        - "user"
-      summary: "Updated user"
-      description: "This can only be done by the logged in user. If passed role_id, only admin can change role, otherwise this field will be ignored"
-      operationId: "updateUser"
+        - 'user'
+      summary: 'Updated user'
+      description: 'This can only be done by the logged in user. If passed role_id, only admin can change role, otherwise this field will be ignored'
+      operationId: 'updateUser'
       produces:
-        - "application/json"
+        - 'application/json'
       parameters:
-        - name: "user_id"
-          in: "path"
-          description: "user id which need to be updated"
+        - name: 'user_id'
+          in: 'path'
+          description: 'user id which need to be updated'
           required: true
-          type: "integer"
-        - in: "body"
-          name: "body"
-          description: "Updated user object"
+          type: 'integer'
+        - in: 'body'
+          name: 'body'
+          description: 'Updated user object'
           required: true
           schema:
-            $ref: "#/definitions/UserUpdate"
+            $ref: '#/definitions/UserUpdate'
       responses:
-        200:
-          description: "Updated user successfully."
-        400:
-          description: "Bad Request (Invalid user supplied. Email already exists. Invalid email type. Invalid min length)"
+        '200':
+          description: Updated user successfully.
+        '400':
+          description: Bad Request (Invalid user supplied. Email already exists. Invalid email type. Invalid min length)
           schema:
-            $ref: "#/definitions/ErrorResponse"
-        401:
-          description: "User needs to log in first."
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: User needs to log in first.
           schema:
-            $ref: "#/definitions/ErrorResponse"
-        403:
-          description: "User does not have permission of admin role."
+            $ref: '#/definitions/ErrorResponse'
+        '403':
+          description: User does not have permission of admin role.
           schema:
-            $ref: "#/definitions/ErrorResponse"
-        404:
-          description: "User not found."
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: User not found.
           schema:
-            $ref: "#/definitions/ErrorResponse"
-        500:
-          description: "Unexpected internal errors."
+            $ref: '#/definitions/ErrorResponse'
+        '500':
+          description: Unexpected internal errors.
           schema:
-            $ref: "#/definitions/ErrorResponse"
+            $ref: '#/definitions/ErrorResponse'
     delete:
       tags:
-        - "user"
-      summary: "Delete user"
-      description: "This operation is only for administrator."
-      operationId: "deleteUser"
+        - 'user'
+      summary: 'Delete user'
+      description: 'This operation is only for administrator.'
+      operationId: 'deleteUser'
       produces:
-        - "application/json"
+        - 'application/json'
       parameters:
-        - name: "user_id"
-          in: "path"
-          description: "User id that needs to be deleted"
+        - name: 'user_id'
+          in: 'path'
+          description: 'User id that needs to be deleted'
           required: true
-          type: "integer"
+          type: 'integer'
       responses:
-        200:
-          description: "User successfully deleted."
-        401:
-          description: "User needs to log in first."
+        '200':
+          description: User successfully deleted.
+        '401':
+          description: User needs to log in first.
           schema:
-            $ref: "#/definitions/ErrorResponse"
-        403:
-          description: "User does not have permission of admin role."
+            $ref: '#/definitions/ErrorResponse'
+        '403':
+          description: User does not have permission of admin role.
           schema:
-            $ref: "#/definitions/ErrorResponse"
-        404:
-          description: "User not found."
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: User not found.
           schema:
-            $ref: "#/definitions/ErrorResponse"
-        500:
-          description: "Unexpected internal errors."
+            $ref: '#/definitions/ErrorResponse'
+        '500':
+          description: Unexpected internal errors.
           schema:
-            $ref: "#/definitions/ErrorResponse"
+            $ref: '#/definitions/ErrorResponse'
   /users/{user_id}/password:
     put:
       summary: Change the password on a user that already exists.
@@ -321,46 +332,46 @@ paths:
           description: Password to be updated, the attribute 'old_password' is optional when the API is called by the system administrator.
           required: true
           schema:
-            $ref: "#/definitions/Password"
+            $ref: '#/definitions/Password'
       tags:
-        - "user"
+        - 'user'
       responses:
-        "200":
+        '200':
           description: Updated password successfully.
-        "400":
+        '400':
           description: Bad Request (Invalid user ID; Old password is blank; New password is blank. Invalid min length password)
           schema:
-            $ref: "#/definitions/ErrorResponse"
-        "401":
+            $ref: '#/definitions/ErrorResponse'
+        '401':
           description: Don't have authority to change password. Please check login status.
           schema:
-            $ref: "#/definitions/ErrorResponse"
-        "403":
+            $ref: '#/definitions/ErrorResponse'
+        '403':
           description: User does not have permission of admin role. / Old password does not a match with your password
           schema:
-            $ref: "#/definitions/ErrorResponse"
-        "500":
+            $ref: '#/definitions/ErrorResponse'
+        '500':
           description: Unexpected internal errors.
           schema:
-            $ref: "#/definitions/ErrorResponse"
+            $ref: '#/definitions/ErrorResponse'
 definitions:
   UserCreate:
-    type: "object"
+    type: 'object'
     properties:
       first_name:
-        type: "string"
+        type: 'string'
       last_name:
-        type: "string"
+        type: 'string'
       email:
-        type: "string"
+        type: 'string'
         format: email
       password:
-        type: "string"
+        type: 'string'
       password_confirmation:
-        type: "string"
+        type: 'string'
       role_id:
-        type: "integer"
-        format: "int32"
+        type: 'integer'
+        format: 'int32'
     required:
       - first_name
       - last_name
@@ -368,57 +379,57 @@ definitions:
       - password
       - password_confirmation
   ErrorResponse:
-    type: "object"
+    type: 'object'
     properties:
       message:
-        type: "string"
+        type: 'string'
   UserUpdate:
-    type: "object"
+    type: 'object'
     properties:
       first_name:
-        type: "string"
+        type: 'string'
       last_name:
-        type: "string"
+        type: 'string'
       email:
-        type: "string"
+        type: 'string'
         format: email
       role_id:
-        type: "integer"
-        format: "int32"
+        type: 'integer'
+        format: 'int32'
   UserGet:
-    type: "object"
+    type: 'object'
     properties:
       id:
-        type: "integer"
-        format: "int32"
+        type: 'integer'
+        format: 'int32'
         example: 1
       first_name:
-        type: "string"
+        type: 'string'
       last_name:
-        type: "string"
+        type: 'string'
       email:
-        type: "string"
+        type: 'string'
         format: email
       role_id:
-        type: "integer"
-        format: "int32"
+        type: 'integer'
+        format: 'int32'
   Role:
-    type: "object"
+    type: 'object'
     properties:
       role_id:
-        type: "integer"
-        format: "int32"
+        type: 'integer'
+        format: 'int32'
       name:
-        type: "string"
+        type: 'string'
   Password:
-    type: "object"
+    type: 'object'
     properties:
       old_password:
-        type: "string"
+        type: 'string'
         description: The user's current password.
       new_password:
-        type: "string"
+        type: 'string'
         description: New password for marking as to be updated.
 externalDocs:
-  description: "Find out more about JetBase"
-  url: "https://jetbase.io"
+  description: 'Find out more about JetBase'
+  url: 'https://jetbase.io'
