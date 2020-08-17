@@ -117,7 +117,7 @@ paths:
       tags:
         - "user"
       responses:
-        '200':
+        "200":
           description: Searched for users successfully.
           schema:
             type: object
@@ -131,11 +131,11 @@ paths:
                 type: integer
                 description: The count of found users
                 example: 1
-        '401':
+        "401":
           description: User need to log in first.
-        '403':
+        "403":
           description: User does not have permission of admin role.
-        '500':
+        "500":
           description: Unexpected internal errors.
     post:
       tags:
@@ -153,7 +153,7 @@ paths:
           schema:
             $ref: "#/definitions/UserCreate"
       responses:
-        '200':
+        "200":
           description: "user successfully created"
           schema:
             type: object
@@ -162,24 +162,22 @@ paths:
                 type: integer
                 description: Id of created user
                 example: 1
-        '400':
-          description: Email already exists.
-        '400':
-          description: Invalid email type.
-        '400':
-          description: first_name/last_name/password/password_confirmation/email is required. 
-        '400':
-          description:  Min length of password must be min 6 characters. 
-        '400':
-          description:  Min length of first_name/last_name must be min 2 characters.
-        '400':
-          description: Password does not match with password confirmation.
-        '401':
+        "400":
+          description: Bad Request (Email already exists. Empty required fields. Min length error. Password does not match with password confirmation.)
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "401":
           description: User needs to log in first.
-        '403':
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "403":
           description: User does not have permission of admin role.
-        '500':
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "500":
           description: Unexpected internal errors.
+          schema:
+            $ref: "#/definitions/ErrorResponse"
   /users/current:
     get:
       summary: Get current user info.
@@ -188,11 +186,11 @@ paths:
       tags:
         - "user"
       responses:
-        '200':
+        "200":
           description: Get current user information successfully.
           schema:
             $ref: "#/definitions/UserGet"
-        '401':
+        "401":
           description: User need to log in first.
   /users/{user_id}:
     get:
@@ -214,16 +212,22 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/UserGet"
-        404:
-          description: "User not found"
         401:
           description: "User needs to log in first."
-        401:
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        403:
           description: "User does not have permission of admin role."
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         404:
           description: "User not found."
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "Unexpected internal errors."
+          schema:
+            $ref: "#/definitions/ErrorResponse"
     put:
       tags:
         - "user"
@@ -248,23 +252,25 @@ paths:
         200:
           description: "Updated user successfully."
         400:
-          description: "Invalid user supplied."
-        400:
-          description: "Email already exists."
-        400:
-          description: "Invalid email type."
-        400:
-          description: "Min length of last_name/first_name must be min 2 characters."
+          description: "Bad Request (Invalid user supplied. Email already exists. Invalid email type. Invalid min length)"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         401:
           description: "User needs to log in first."
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         403:
-          description: "The caller does not have permission to update the user with given ID."
-        403:
-          description: "The caller does not have permission to update the role id."
+          description: "User does not have permission of admin role."
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         404:
           description: "User not found."
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "Unexpected internal errors."
+          schema:
+            $ref: "#/definitions/ErrorResponse"
     delete:
       tags:
         - "user"
@@ -284,12 +290,20 @@ paths:
           description: "User successfully deleted."
         401:
           description: "User needs to log in first."
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         403:
           description: "User does not have permission of admin role."
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         404:
           description: "User not found."
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "Unexpected internal errors."
+          schema:
+            $ref: "#/definitions/ErrorResponse"
   /users/{user_id}/password:
     put:
       summary: Change the password on a user that already exists.
@@ -311,22 +325,24 @@ paths:
       tags:
         - "user"
       responses:
-        '200':
+        "200":
           description: Updated password successfully.
-        '400':
-          description: Invalid user ID; Old password is blank; New password is blank.
-        '400':
-          description: Min length of new password must be min 6 characters.
-        '401':
+        "400":
+          description: Bad Request (Invalid user ID; Old password is blank; New password is blank. Invalid min length password)
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "401":
           description: Don't have authority to change password. Please check login status.
-        '403':
-          description: Old password does not a match with your password.
-        '401':
-          description: Don't have authority to change password. Please check login status.
-        '403':
-          description: The caller does not have permission to update the password of the user with given ID, or the old password in request body is not correct.
-        '500':
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "403":
+          description: User does not have permission of admin role. / Old password does not a match with your password
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "500":
           description: Unexpected internal errors.
+          schema:
+            $ref: "#/definitions/ErrorResponse"
 definitions:
   UserCreate:
     type: "object"
@@ -351,6 +367,10 @@ definitions:
       - email
       - password
       - password_confirmation
+  ErrorResponse:
+    type: "object"
+    properties:
+      message: "string"
   UserUpdate:
     type: "object"
     properties:
