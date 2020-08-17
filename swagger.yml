@@ -370,7 +370,8 @@ definitions:
   ErrorResponse:
     type: "object"
     properties:
-      message: "string"
+      message:
+        type: "string"
   UserUpdate:
     type: "object"
     properties:
